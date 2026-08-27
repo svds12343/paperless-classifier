@@ -1,0 +1,31 @@
+# Secrets / local environment
+.classifier.env
+.env
+.env.*
+!.classifier.env.example
+docker-compose.env
+
+# Private keys / certificates
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Runtime state and Paperless data
+classifier-state/
+state/
+data/
+media/
+consume/
+export/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
