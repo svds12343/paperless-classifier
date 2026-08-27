@@ -1,0 +1,15 @@
+services:
+  paperless-classifier:
+    build:
+      context: ./classifier
+    restart: unless-stopped
+    depends_on:
+      - webserver
+    env_file:
+      - .classifier.env
+    volumes:
+      - ./classifier/taxonomy.yaml:/app/taxonomy.yaml:ro
+      - classifier_state:/state
+
+volumes:
+  classifier_state:
