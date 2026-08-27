@@ -1,0 +1,249 @@
+version: 1
+
+document_types:
+  invoice: {name: "Facture", description: "Demande de paiement pour un bien, service, prime, abonnement ou charge."}
+  receipt: {name: "Reçu / Ticket", description: "Preuve d'un paiement ou achat déjà effectué."}
+  statement: {name: "Relevé / Décompte", description: "Relevé périodique, état de compte, prestations, consommation ou opérations."}
+  contract: {name: "Contrat / Convention", description: "Accord créant des obligations entre parties."}
+  amendment: {name: "Avenant / Conditions", description: "Modification contractuelle ou conditions applicables."}
+  letter: {name: "Courrier", description: "Lettre ou communication générale non décisionnelle."}
+  official_decision: {name: "Décision / Notification officielle", description: "Décision, taxation, sommation ou acte formel d'une autorité."}
+  certificate: {name: "Attestation / Certificat", description: "Document attestant officiellement un fait, une qualification ou une couverture."}
+  payslip: {name: "Fiche de salaire", description: "Décompte de salaire et retenues."}
+  tax_document: {name: "Document fiscal", description: "Déclaration, certificat fiscal, taxation ou justificatif fiscal."}
+  insurance_policy: {name: "Police / Conditions d'assurance", description: "Police, certificat de couverture ou conditions d'assurance."}
+  quote: {name: "Offre / Devis", description: "Proposition commerciale ou estimation avant prestation."}
+  order_confirmation: {name: "Confirmation / Bon de commande", description: "Confirmation de commande ou bon de commande."}
+  warranty: {name: "Garantie", description: "Garantie produit ou prise en charge SAV."}
+  manual: {name: "Manuel / Documentation", description: "Mode d'emploi, guide ou documentation technique."}
+  form: {name: "Formulaire / Demande", description: "Formulaire vierge/rempli ou demande administrative."}
+  proof: {name: "Justificatif / Preuve", description: "Pièce justificative ne correspondant pas mieux à un autre type."}
+  identity: {name: "Document d'identité", description: "Passeport, carte d'identité, permis ou identification officielle."}
+  report: {name: "Rapport / Résultat", description: "Rapport, résultat, compte-rendu ou synthèse."}
+  reservation: {name: "Réservation / Billet", description: "Billet, réservation ou confirmation de voyage."}
+  notice: {name: "Avis / Rappel", description: "Avis, rappel, échéance ou information formelle courte."}
+  other: {name: "Autre", description: "À utiliser uniquement si aucun autre type ne convient."}
+
+categories:
+  administration:
+    name: "Administration"
+    color: "#1f78b4"
+    description: "Autorités publiques, identité, assurances sociales, ORP et démarches officielles."
+    storage_path: "Administration/{{ created_year }}/{{ correspondent }}/{{ document_type }}/{{ title }}"
+    tags:
+      authorities: {name: "Autorités / Administration publique", description: "Commune, canton, Confédération ou organisme public."}
+      social_security: {name: "AVS / AI / APG", description: "Assurances sociales suisses AVS, AI, APG et documents associés."}
+      unemployment: {name: "Chômage / ORP", description: "ORP, chômage, indemnités et mesures."}
+      identity_civil: {name: "Identité / État civil", description: "Identité, état civil, nationalité ou résidence."}
+      permits: {name: "Permis / Autorisations", description: "Permis et autorisations administratives hors permis de conduire."}
+      serafe: {name: "SERAFE / Redevances", description: "Redevance radio-TV et redevances publiques similaires."}
+      elections: {name: "Votations / Élections", description: "Matériel de vote, décisions électorales et informations civiques."}
+
+  finance:
+    name: "Finance"
+    color: "#33a02c"
+    description: "Banque, paiements, crédit, investissement, impôts et prévoyance."
+    storage_path: "Finance/{{ created_year }}/{{ correspondent }}/{{ document_type }}/{{ title }}"
+    tags:
+      banking: {name: "Banque / Comptes", description: "Comptes bancaires, IBAN, relevés et relation bancaire."}
+      cards_payments: {name: "Cartes / Paiements", description: "Cartes, paiements, transactions, Twint et moyens de paiement."}
+      loans: {name: "Crédit / Prêt", description: "Crédit, prêt, dette ou financement."}
+      investments: {name: "Épargne / Investissements", description: "Placements, titres, courtage et épargne."}
+      taxes: {name: "Impôts", description: "Impôts fédéraux, cantonaux ou communaux, déclarations et taxations."}
+      pension: {name: "Prévoyance / LPP / 3e pilier", description: "LPP, caisse de pension, libre passage et 3e pilier."}
+      billing: {name: "Facturation / Paiement", description: "Facture ou paiement sans domaine principal plus précis."}
+      fees: {name: "Frais / Commissions", description: "Frais bancaires, administratifs ou commissions financières."}
+
+  employment:
+    name: "Emploi"
+    color: "#6a3d9a"
+    description: "Relation de travail, rémunération, RH et recrutement."
+    storage_path: "Emploi/{{ created_year }}/{{ correspondent }}/{{ document_type }}/{{ title }}"
+    tags:
+      employment_contract: {name: "Contrat de travail", description: "Contrat, avenant ou conditions d'emploi."}
+      salary: {name: "Salaire", description: "Fiche de salaire, bonus, rémunération ou certificat de salaire."}
+      work_certificate: {name: "Certificat de travail", description: "Certificat ou attestation d'emploi."}
+      recruitment: {name: "Candidature / Recrutement", description: "Candidature, offre d'emploi, entretien ou recruteur."}
+      hr: {name: "RH / Employeur", description: "Correspondance RH et administration du personnel."}
+      expenses: {name: "Frais professionnels", description: "Notes de frais et remboursements professionnels."}
+      time_leave: {name: "Temps / Congés", description: "Vacances, congés, temps de travail ou absences."}
+
+  housing:
+    name: "Logement"
+    color: "#ff7f00"
+    description: "Bail, régie, loyer, charges, énergie et démarches liées au domicile."
+    storage_path: "Logement/{{ created_year }}/{{ correspondent }}/{{ document_type }}/{{ title }}"
+    tags:
+      lease: {name: "Bail", description: "Contrat de bail, avenant, résiliation ou état des lieux."}
+      rent_charges: {name: "Loyer / Charges", description: "Loyer, charges locatives ou décompte de charges."}
+      landlord: {name: "Régie / Propriétaire", description: "Correspondance avec régie, gérance ou propriétaire."}
+      utilities: {name: "Énergie / Eau", description: "Électricité, gaz, chauffage ou eau du logement."}
+      moving: {name: "Déménagement", description: "Changement d'adresse, entrée/sortie ou remise de clés."}
+      household_services: {name: "Services du logement", description: "Prestations et contrats directement liés au logement."}
+
+  insurance:
+    name: "Assurances"
+    color: "#e31a1c"
+    description: "Primes, polices, sinistres, remboursements et couvertures d'assurance."
+    storage_path: "Assurances/{{ created_year }}/{{ correspondent }}/{{ document_type }}/{{ title }}"
+    tags:
+      health_insurance: {name: "Assurance maladie / LAMal", description: "LAMal/LCA santé, primes, franchise, quote-part, subside ou décompte."}
+      accident: {name: "Assurance accident", description: "Assurance accident privée ou professionnelle."}
+      household_liability: {name: "Ménage / RC", description: "Assurance ménage et responsabilité civile privée."}
+      vehicle_insurance: {name: "Assurance véhicule", description: "RC, casco et autres assurances liées au véhicule."}
+      life: {name: "Assurance vie", description: "Assurance vie ou couverture décès."}
+      legal_protection: {name: "Protection juridique", description: "Assurance de protection juridique."}
+      claims: {name: "Sinistre / Remboursement", description: "Annonce de sinistre, prise en charge ou remboursement."}
+      premium: {name: "Prime d'assurance", description: "Facture ou avis de prime d'assurance."}
+
+  health:
+    name: "Santé"
+    color: "#fb9a99"
+    description: "Prestataires de soins, prescriptions, examens, résultats et factures médicales."
+    storage_path: "Santé/{{ created_year }}/{{ correspondent }}/{{ document_type }}/{{ title }}"
+    tags:
+      provider: {name: "Médecin / Hôpital", description: "Consultation, établissement ou correspondance clinique."}
+      pharmacy: {name: "Pharmacie / Ordonnance", description: "Ordonnance, pharmacie ou médicament."}
+      labs: {name: "Analyses / Résultats", description: "Laboratoire, analyse, imagerie ou résultat médical."}
+      dental: {name: "Dentaire", description: "Dentiste, orthodontie et soins dentaires."}
+      medical_billing: {name: "Facture médicale", description: "Facture émise par un prestataire de santé."}
+      therapy: {name: "Thérapie / Physiothérapie", description: "Physiothérapie, psychothérapie et thérapies assimilées."}
+      vaccination: {name: "Vaccination", description: "Vaccins et certificats de vaccination."}
+
+  telecom:
+    name: "Télécom & Internet"
+    color: "#cab2d6"
+    description: "Téléphonie, Internet et abonnements de communication."
+    storage_path: "Télécom/{{ created_year }}/{{ correspondent }}/{{ document_type }}/{{ title }}"
+    tags:
+      mobile: {name: "Téléphonie mobile", description: "Abonnement, facture ou contrat mobile."}
+      internet: {name: "Internet", description: "Connexion Internet fixe, fibre, modem ou FAI."}
+      subscriptions: {name: "Abonnements télécom", description: "Options et services télécom généraux."}
+      devices: {name: "Matériel télécom", description: "Routeur, modem, téléphone ou matériel fourni par opérateur."}
+
+  purchases:
+    name: "Achats & Garanties"
+    color: "#fdbf6f"
+    description: "Achats personnels, commandes, livraisons, garanties et SAV."
+    storage_path: "Achats/{{ created_year }}/{{ correspondent }}/{{ document_type }}/{{ title }}"
+    tags:
+      purchase: {name: "Achat", description: "Achat de bien ou service personnel."}
+      orders: {name: "Commande / Livraison", description: "Commande, confirmation, expédition ou livraison."}
+      warranty_service: {name: "Garantie / SAV", description: "Garantie, retour, réparation ou service après-vente."}
+      digital_subscription: {name: "Abonnement numérique", description: "Logiciel, cloud, streaming ou service numérique récurrent."}
+      electronics: {name: "Électronique / Informatique", description: "Matériel informatique, électronique ou accessoires."}
+      furniture_home: {name: "Maison / Mobilier", description: "Mobilier, électroménager ou équipement de maison."}
+
+  education:
+    name: "Formation"
+    color: "#b2df8a"
+    description: "École, apprentissage, cours, certification, diplôme et frais de formation."
+    storage_path: "Formation/{{ created_year }}/{{ correspondent }}/{{ document_type }}/{{ title }}"
+    tags:
+      school_training: {name: "École / Formation", description: "Cours, école, apprentissage ou formation."}
+      diploma: {name: "Diplôme / Certification", description: "Diplôme, certificat, résultat ou certification professionnelle."}
+      education_costs: {name: "Frais de formation", description: "Factures, taxes, frais de cours ou matériel de formation."}
+      exams: {name: "Examens / Résultats", description: "Examens, notes et résultats scolaires ou professionnels."}
+      apprenticeship: {name: "Apprentissage", description: "Documents liés à un apprentissage professionnel."}
+
+  vehicle:
+    name: "Véhicule"
+    color: "#b15928"
+    description: "Permis de conduire, immatriculation, entretien et achat/vente de véhicules."
+    storage_path: "Véhicule/{{ created_year }}/{{ correspondent }}/{{ document_type }}/{{ title }}"
+    tags:
+      driving_license: {name: "Permis de conduire", description: "Permis d'élève, permis de conduire et examens."}
+      registration: {name: "Immatriculation / SAN", description: "SAN, plaques, carte grise, expertise ou immatriculation."}
+      maintenance: {name: "Entretien / Réparation véhicule", description: "Garage, entretien, pneus, réparation ou contrôle."}
+      energy: {name: "Carburant / Recharge", description: "Carburant ou recharge électrique du véhicule."}
+      purchase_sale: {name: "Achat / Vente véhicule", description: "Achat, vente, offre ou contrat portant sur un véhicule."}
+      parking: {name: "Parking / Stationnement", description: "Abonnement, facture ou autorisation de stationnement."}
+      fines: {name: "Amende / Contravention", description: "Amende, contravention ou sanction routière."}
+
+  travel:
+    name: "Voyage"
+    color: "#a6cee3"
+    description: "Transport, hébergement et réservations de voyage."
+    storage_path: "Voyage/{{ created_year }}/{{ correspondent }}/{{ document_type }}/{{ title }}"
+    tags:
+      transport: {name: "Transport / Billet", description: "Train, avion, bus, location ou billet de transport."}
+      accommodation: {name: "Hébergement", description: "Hôtel, location de vacances ou hébergement."}
+      booking: {name: "Réservation", description: "Confirmation ou modification de réservation."}
+      travel_insurance: {name: "Assurance voyage", description: "Assurance spécifiquement liée à un voyage."}
+
+  legal:
+    name: "Juridique"
+    color: "#555555"
+    description: "Contrats juridiques généraux, litiges, procédures et recours."
+    storage_path: "Juridique/{{ created_year }}/{{ correspondent }}/{{ document_type }}/{{ title }}"
+    tags:
+      legal_contract: {name: "Contrat juridique", description: "Contrat ne relevant pas mieux d'un autre domaine."}
+      dispute: {name: "Litige", description: "Différend, mise en demeure, plainte ou contentieux."}
+      appeal: {name: "Décision / Recours", description: "Décision contestée, opposition ou recours."}
+      lawyer: {name: "Avocat / Conseil juridique", description: "Correspondance avec avocat, notaire ou conseil juridique."}
+
+  subscriptions:
+    name: "Abonnements & Services"
+    color: "#8dd3c7"
+    description: "Abonnements et services récurrents qui ne relèvent pas mieux du télécom, logement ou assurance."
+    storage_path: "Abonnements/{{ created_year }}/{{ correspondent }}/{{ document_type }}/{{ title }}"
+    tags:
+      memberships: {name: "Adhésion / Cotisation", description: "Association, club, cotisation ou adhésion."}
+      recurring_service: {name: "Service récurrent", description: "Service récurrent général."}
+      media: {name: "Média / Streaming", description: "Streaming, presse ou média payant."}
+
+  personal:
+    name: "Personnel"
+    color: "#cccccc"
+    description: "Correspondance privée et documents personnels non spécialisés."
+    storage_path: "Personnel/{{ created_year }}/{{ correspondent }}/{{ document_type }}/{{ title }}"
+    tags:
+      family: {name: "Famille", description: "Document familial sans catégorie plus précise."}
+      private_correspondence: {name: "Correspondance privée", description: "Lettre ou communication personnelle."}
+      personal_document: {name: "Document personnel", description: "Document personnel générique."}
+
+  other:
+    name: "Autre"
+    color: "#dddddd"
+    description: "Dernier recours lorsque le document ne rentre dans aucune catégorie."
+    storage_path: "Autre/{{ created_year }}/{{ correspondent }}/{{ document_type }}/{{ title }}"
+    tags:
+      miscellaneous: {name: "Divers", description: "Seulement si aucune catégorie spécialisée n'est appropriée."}
+
+status_tags:
+  classified: {name: "AI::Classé", color: "#33a02c"}
+  review: {name: "AI::À vérifier", color: "#ff7f00"}
+  error: {name: "AI::Erreur", color: "#e31a1c"}
+
+correspondent_aliases:
+  UBS: ["UBS AG", "UBS Switzerland AG", "UBS Suisse"]
+  PostFinance: ["PostFinance AG", "PostFinance SA"]
+  BCV: ["Banque Cantonale Vaudoise", "BCV Banque Cantonale Vaudoise"]
+  Raiffeisen: ["Raiffeisen Schweiz", "Raiffeisen Suisse"]
+  Swisscom: ["Swisscom AG", "Swisscom (Schweiz) AG", "Swisscom Suisse SA"]
+  Sunrise: ["Sunrise GmbH", "Sunrise Communications AG"]
+  Salt: ["Salt Mobile SA", "Salt Mobile"]
+  CSS: ["CSS Assurance", "CSS Versicherung", "CSS Kranken-Versicherung AG"]
+  Helsana: ["Helsana Assurances", "Helsana Versicherungen AG"]
+  "Groupe Mutuel": ["Groupe Mutuel Assurances"]
+  SWICA: ["SWICA Assurance-maladie SA", "SWICA Krankenversicherung AG"]
+  AXA: ["AXA Assurances", "AXA Versicherungen AG"]
+  "La Mobilière": ["Mobilière Suisse Société d'assurances SA", "Die Mobiliar", "Mobiliar"]
+  Zurich: ["Zurich Compagnie d'Assurances SA", "Zurich Insurance"]
+  SERAFE: ["Serafe AG", "Serafe SA"]
+  SBB: ["CFF", "CFF SBB FFS", "Schweizerische Bundesbahnen"]
+
+rules:
+  - "Classify by the document's actual purpose, not by incidental words."
+  - "primary_category is the domain that best explains why the document exists."
+  - "A document may receive cross-domain leaf tags, but only when each tag is materially useful."
+  - "Insurance documents stay primarily under insurance even if they contain prices or payments."
+  - "Medical-provider documents belong to health; health-insurer premiums and reimbursements belong to insurance."
+  - "Salary and employment documents belong primarily to employment even though money is involved."
+  - "Rent, leases and housing charges belong primarily to housing even though money is involved."
+  - "Vehicle insurance belongs primarily to insurance and uses insurance.vehicle_insurance."
+  - "Tax documents belong primarily to finance and use finance.taxes."
+  - "ORP/unemployment administration belongs to administration; employer/recruiter applications belong to employment."
+  - "Do not add finance.billing when a more specific domain already explains an ordinary invoice."
+  - "Never classify based only on the recipient's identity."
+  - "Use other only as a genuine last resort."
