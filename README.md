@@ -26,7 +26,8 @@ You need:
 - Docker with the `docker compose` command;
 - a Paperless API token;
 - an OpenAI API key;
-- the OpenAI model you want the classifier to use.
+- the OpenAI model you want the classifier to use;
+- Paperless-ngx's own AI suggestions configured as the manual fallback for documents marked `AI::À vérifier`.
 
 The installer expects Paperless in `~/paperless` by default. Another location can be supplied explicitly.
 
@@ -55,7 +56,7 @@ cp .classifier.env.example .classifier.env
 nano .classifier.env
 ```
 
-Review the entire file before starting the classifier. All supported configuration is set here from the start:
+Review the entire file before starting the classifier. All supported classifier configuration is set here from the start:
 
 ```text
 # Paperless
@@ -112,9 +113,55 @@ Then protect the file:
 chmod 600 .classifier.env
 ```
 
-Do not start the classifier until this file is complete. The installer checks that every supported configuration key is present.
+Do not start the classifier until this file is complete. The installer checks that every supported classifier configuration key is present.
 
-### 4. Install and start
+### 4. Configure Paperless-ngx AI suggestions
+
+This is separate from the classifier configuration above. Paperless-ngx does not read the classifier's `.classifier.env`; its own AI backend must also be configured.
+
+For the intended workflow of this project, Paperless AI suggestions should be enabled before you start using the classifier. The classifier can technically run without them, but you would lose the fast manual fallback for documents that it deliberately refuses to guess on.
+
+With the OpenAI-compatible backend, configure Paperless with at least:
+
+```text
+PAPERLESS_AI_ENABLED=true
+PAPERLESS_AI_LLM_BACKEND=openai-like
+PAPERLESS_AI_LLM_MODEL=gpt-5.6-terra
+PAPERLESS_AI_LLM_API_KEY=your_openai_api_key
+PAPERLESS_AI_LLM_ENDPOINT=https://api.openai.com/v1
+PAPERLESS_AI_LLM_OUTPUT_LANGUAGE=fr
+```
+
+You may reuse the same OpenAI API key as the classifier, or use a separate key if you want separate usage tracking.
+
+Paperless-ngx also allows these settings to be configured from **Settings → Application Configuration**. Paperless's database configuration takes precedence over environment variables, so make sure you do not have an older conflicting value stored there.
+
+An embedding backend / LLM index is not required just to use AI suggestions. It can be added later for RAG, similar-document retrieval and document chat.
+
+#### Why this matters
+
+The classifier is intentionally conservative. When confidence is too low or the document is ambiguous, it does not invent metadata; it marks the document:
+
+```text
+AI::À vérifier
+```
+
+When that happens:
+
+1. open the document in Paperless-ngx;
+2. click **✨ Suggest**;
+3. let Paperless generate AI suggestions for the title, tags, correspondent, document type, storage path and date;
+4. review the suggestions and accept the correct values.
+
+This gives you an immediate second pass without manually filling every field. In practice, the Paperless suggestion is often enough to resolve a document the strict classifier sent for review because it can propose metadata interactively instead of being forced to satisfy the classifier's confidence threshold.
+
+The **Suggest** action is still manual/opt-in: Paperless shows suggestions for you to review; it does not mean you should blindly accept every result.
+
+After configuring Paperless AI, test it on one document before continuing. Open a document and confirm that **✨ Suggest** returns AI-generated metadata instead of an `Invalid AI configuration` error.
+
+Paperless documentation: [AI features](https://docs.paperless-ngx.com/advanced_usage/#ai-features) and [AI configuration](https://docs.paperless-ngx.com/configuration/#ai).
+
+### 5. Install and start the classifier
 
 If Paperless is in `~/paperless`:
 
@@ -217,9 +264,9 @@ Existing successfully classified documents are not automatically rewritten just 
 
 ## Configuration
 
-The complete runtime configuration lives in `.classifier.env` and must be reviewed during installation in step 3. There is no separate set of configuration that is intentionally deferred until later.
+The complete classifier runtime configuration lives in `.classifier.env` and must be reviewed during installation in step 3. Paperless-ngx's own AI suggestion backend is configured separately in step 4; both should be configured before normal use.
 
-To change a setting after installation:
+To change a classifier setting after installation:
 
 ```bash
 nano .classifier.env
@@ -259,18 +306,17 @@ For a personal Paperless archive, Terra is still fairly inexpensive. As an illus
 
 At that same illustrative usage, 100 documents would cost about **$2.36**, and 1,000 documents about **$23.60**. Many short documents can cost less; long OCR documents or larger model outputs can cost more. The classifier also caps document OCR text with `MAX_TEXT_CHARS` (50,000 by default), which prevents arbitrarily large document text from being sent in a single classification request.
 
-These figures are examples, not a fixed per-document fee: OpenAI bills by actual token usage and can change pricing. Check the official pages for current rates:
-
-- [GPT-5.6 Terra model and pricing](https://developers.openai.com/api/docs/models/gpt-5.6-terra)
-- [OpenAI GPT-5.6 pricing update](https://openai.com/index/advancing-the-price-performance-frontier-with-gpt-5-6/)
+Paperless-ngx AI suggestions use their own API calls, so clicking **✨ Suggest** also consumes tokens. Because it is only needed as a fallback for documents requiring review, the additional cost should normally remain small for a personal archive.
 
 ## Privacy
 
 The classifier sends extracted document text to the configured OpenAI API. It does not upload the original PDF itself.
 
-OpenAI requests use `store=false`.
+Paperless-ngx AI suggestions also send document content to the AI backend configured in Paperless. If you use OpenAI or another hosted provider for both, both features send document content outside your server and can incur API usage charges.
 
-Your secrets stay in `.classifier.env`, which is excluded from Git. Never commit this file.
+Classifier OpenAI requests use `store=false`.
+
+Your classifier secrets stay in `.classifier.env`, which is excluded from Git. Never commit this file. Protect the Paperless AI API key with the same care.
 
 ## Updating the classifier
 
@@ -300,7 +346,7 @@ chmod 600 .classifier.env
 ./install-classifier.sh /path/to/paperless
 ```
 
-Review the complete `.classifier.env` exactly as described in installation step 3 before running the installer.
+Review the complete `.classifier.env` exactly as described in installation step 3 and reconfigure Paperless-ngx AI suggestions as described in step 4 before normal use.
 
 With `BOOTSTRAP_EXISTING=true`, the classifier can classify the restored Paperless documents again.
 
