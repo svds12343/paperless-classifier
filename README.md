@@ -46,7 +46,7 @@ git clone https://github.com/svds12343/paperless-classifier.git
 cd paperless-classifier
 ```
 
-### 3. Configure Paperless and OpenAI
+### 3. Configure everything before first start
 
 Create your local configuration:
 
@@ -55,23 +55,64 @@ cp .classifier.env.example .classifier.env
 nano .classifier.env
 ```
 
-Set or confirm these three values before starting the classifier:
+Review the entire file before starting the classifier. All supported configuration is set here from the start:
 
 ```text
+# Paperless
+PAPERLESS_URL=http://webserver:8000
 PAPERLESS_TOKEN=your_paperless_api_token
+
+# OpenAI
 OPENAI_API_KEY=your_openai_api_key
 OPENAI_MODEL=gpt-5.4-mini
+OPENAI_BASE_URL=https://api.openai.com/v1
+OPENAI_REASONING_EFFORT=low
+
+# Classification behaviour
+POLL_INTERVAL=30
+REQUEST_TIMEOUT=90
+MAX_TEXT_CHARS=50000
+MIN_CONFIDENCE=0.84
+CORRESPONDENT_FUZZY_THRESHOLD=0.96
+ERROR_RETRY_SECONDS=1800
+BOOTSTRAP_EXISTING=true
+TITLE_LANGUAGE=fr
+LOG_LEVEL=INFO
+
+# Internal paths
+TAXONOMY_FILE=/app/taxonomy.yaml
+STATE_FILE=/state/state.json
 ```
 
-`OPENAI_MODEL` is the model that will be sent to the OpenAI Responses API for every classification request. Change it here if you want to use another compatible model.
+At minimum, replace the two credential placeholders with your real values. Also confirm every other value before the first start, especially `OPENAI_MODEL`, `BOOTSTRAP_EXISTING`, `TITLE_LANGUAGE` and `MIN_CONFIDENCE`.
 
-The example configuration already contains `OPENAI_MODEL=gpt-5.4-mini`, but you should confirm that this is the model you want before the first start.
+What the settings control:
+
+- `PAPERLESS_URL`: Paperless API address reachable from the classifier container.
+- `PAPERLESS_TOKEN`: Paperless API token.
+- `OPENAI_API_KEY`: OpenAI API key.
+- `OPENAI_MODEL`: model sent to the OpenAI Responses API for every classification.
+- `OPENAI_BASE_URL`: OpenAI-compatible API base URL.
+- `OPENAI_REASONING_EFFORT`: reasoning effort requested from the model.
+- `POLL_INTERVAL`: seconds between checks for documents.
+- `REQUEST_TIMEOUT`: API request timeout in seconds.
+- `MAX_TEXT_CHARS`: maximum OCR text sent for one document.
+- `MIN_CONFIDENCE`: minimum accepted classification confidence.
+- `CORRESPONDENT_FUZZY_THRESHOLD`: similarity required to reuse an existing correspondent.
+- `ERROR_RETRY_SECONDS`: wait before retrying a technical failure.
+- `BOOTSTRAP_EXISTING`: whether existing Paperless documents are processed on first startup.
+- `TITLE_LANGUAGE`: language used for generated document titles.
+- `LOG_LEVEL`: classifier logging level.
+- `TAXONOMY_FILE`: taxonomy path inside the container.
+- `STATE_FILE`: classifier state path inside the container.
 
 Then protect the file:
 
 ```bash
 chmod 600 .classifier.env
 ```
+
+Do not start the classifier until this file is complete. The installer checks that every supported configuration key is present.
 
 ### 4. Install and start
 
@@ -90,10 +131,11 @@ If Paperless is somewhere else:
 The installer will:
 
 1. find the existing Paperless Compose file;
-2. build the classifier image;
-3. validate `classifier/taxonomy.yaml`;
-4. create/synchronize its tags, document types and storage paths in Paperless;
-5. start the classifier sidecar.
+2. check that the complete classifier configuration exists;
+3. build the classifier image;
+4. validate `classifier/taxonomy.yaml`;
+5. create/synchronize its tags, document types and storage paths in Paperless;
+6. start the classifier sidecar.
 
 It does not replace your Paperless configuration and does not copy classifier files into the Paperless directory.
 
@@ -175,28 +217,16 @@ Existing successfully classified documents are not automatically rewritten just 
 
 ## Configuration
 
-The three core values to set or confirm during installation are:
+The complete runtime configuration lives in `.classifier.env` and must be reviewed during installation in step 3. There is no separate set of configuration that is intentionally deferred until later.
 
-```text
-PAPERLESS_TOKEN=your_paperless_api_token
-OPENAI_API_KEY=your_openai_api_key
-OPENAI_MODEL=gpt-5.4-mini
+To change a setting after installation:
+
+```bash
+nano .classifier.env
+./install-classifier.sh
 ```
 
-Other settings are optional tuning:
-
-```text
-PAPERLESS_URL=http://webserver:8000
-MIN_CONFIDENCE=0.84
-BOOTSTRAP_EXISTING=true
-TITLE_LANGUAGE=fr
-POLL_INTERVAL=30
-LOG_LEVEL=INFO
-```
-
-`BOOTSTRAP_EXISTING=true` means documents already present in Paperless are eligible for classification after the classifier is installed for the first time.
-
-Set it to `false` before first startup if you only want newly added documents classified.
+`BOOTSTRAP_EXISTING=true` means documents already present in Paperless are eligible for classification on the classifier's first startup. Set it to `false` before that first startup if you only want newly added documents classified.
 
 ## Privacy
 
@@ -234,7 +264,7 @@ chmod 600 .classifier.env
 ./install-classifier.sh /path/to/paperless
 ```
 
-Before running the installer, set `PAPERLESS_TOKEN`, `OPENAI_API_KEY` and confirm `OPENAI_MODEL` in `.classifier.env`.
+Review the complete `.classifier.env` exactly as described in installation step 3 before running the installer.
 
 With `BOOTSTRAP_EXISTING=true`, the classifier can classify the restored Paperless documents again.
 
