@@ -1,14 +1,12 @@
 services:
   paperless-classifier:
     build:
-      context: ./classifier
+      context: ${CLASSIFIER_DIR:?CLASSIFIER_DIR_is_required}/classifier
     restart: unless-stopped
-    depends_on:
-      - webserver
     env_file:
-      - .classifier.env
+      - ${CLASSIFIER_DIR:?CLASSIFIER_DIR_is_required}/.classifier.env
     volumes:
-      - ./classifier/taxonomy.yaml:/app/taxonomy.yaml:ro
+      - ${CLASSIFIER_DIR:?CLASSIFIER_DIR_is_required}/classifier/taxonomy.yaml:/app/taxonomy.yaml:ro
       - classifier_state:/state
 
 volumes:
