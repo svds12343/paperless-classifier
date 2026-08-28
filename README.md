@@ -64,7 +64,7 @@ PAPERLESS_TOKEN=your_paperless_api_token
 
 # OpenAI
 OPENAI_API_KEY=your_openai_api_key
-OPENAI_MODEL=gpt-5.4-mini
+OPENAI_MODEL=gpt-5.6-terra
 OPENAI_BASE_URL=https://api.openai.com/v1
 OPENAI_REASONING_EFFORT=low
 
@@ -227,6 +227,42 @@ nano .classifier.env
 ```
 
 `BOOTSTRAP_EXISTING=true` means documents already present in Paperless are eligible for classification on the classifier's first startup. Set it to `false` before that first startup if you only want newly added documents classified.
+
+## Recommended model and API cost
+
+The recommended default is:
+
+```text
+OPENAI_MODEL=gpt-5.6-terra
+```
+
+GPT-5.6 Terra is the best default for this classifier because it is designed to balance intelligence and cost. Document classification benefits from accurate interpretation of OCR text, document purpose, issuer, dates and taxonomy rules, so Terra gives more margin for difficult or ambiguous documents than choosing the cheapest model purely to minimize token cost.
+
+If API cost is the main priority, `gpt-5.6-luna` is also compatible and is substantially cheaper. `gpt-5.6-sol` is the premium tier, but it is usually unnecessary for routine document classification.
+
+Current standard OpenAI API text pricing, checked on 29 August 2026:
+
+| Model | Input / 1M tokens | Output / 1M tokens | Suggested use |
+| --- | ---: | ---: | --- |
+| GPT-5.6 Luna | $0.20 | $1.20 | Lowest-cost/high-volume classification |
+| **GPT-5.6 Terra** | **$2.00** | **$12.00** | **Recommended balance for this classifier** |
+| GPT-5.6 Sol | $5.00 | $30.00 | Premium capability; usually overkill here |
+
+For a personal Paperless archive, Terra is still fairly inexpensive. As an illustrative example, a classification using 10,000 input tokens and 300 output tokens would cost about **$0.0236** at standard Terra pricing:
+
+```text
+10,000 input tokens × $2 / 1,000,000   = $0.0200
+   300 output tokens × $12 / 1,000,000 = $0.0036
+                                         -------
+                                         $0.0236
+```
+
+At that same illustrative usage, 100 documents would cost about **$2.36**, and 1,000 documents about **$23.60**. Many short documents can cost less; long OCR documents or larger model outputs can cost more. The classifier also caps document OCR text with `MAX_TEXT_CHARS` (50,000 by default), which prevents arbitrarily large document text from being sent in a single classification request.
+
+These figures are examples, not a fixed per-document fee: OpenAI bills by actual token usage and can change pricing. Check the official pages for current rates:
+
+- [GPT-5.6 Terra model and pricing](https://developers.openai.com/api/docs/models/gpt-5.6-terra)
+- [OpenAI GPT-5.6 pricing update](https://openai.com/index/advancing-the-price-performance-frontier-with-gpt-5-6/)
 
 ## Privacy
 
