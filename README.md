@@ -350,23 +350,6 @@ Review the complete `.classifier.env` exactly as described in installation step 
 
 With `BOOTSTRAP_EXISTING=true`, the classifier can classify the restored Paperless documents again.
 
-## Security before publishing changes
-
-Never commit:
-
-- `.classifier.env`;
-- Paperless API tokens;
-- OpenAI API keys;
-- Paperless document data;
-- private keys or certificates;
-- classifier runtime state.
-
-Before pushing repository changes:
-
-```bash
-./verify-no-secrets.sh
-```
-
 ## Repository layout
 
 ```text
