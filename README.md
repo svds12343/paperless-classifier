@@ -25,7 +25,8 @@ You need:
 - an existing Paperless-ngx installation using Docker Compose;
 - Docker with the `docker compose` command;
 - a Paperless API token;
-- an OpenAI API key.
+- an OpenAI API key;
+- the OpenAI model you want the classifier to use.
 
 The installer expects Paperless in `~/paperless` by default. Another location can be supplied explicitly.
 
@@ -45,19 +46,26 @@ git clone https://github.com/svds12343/paperless-classifier.git
 cd paperless-classifier
 ```
 
-### 3. Create the local configuration
+### 3. Configure Paperless and OpenAI
+
+Create your local configuration:
 
 ```bash
 cp .classifier.env.example .classifier.env
 nano .classifier.env
 ```
 
-Set these two values:
+Set or confirm these three values before starting the classifier:
 
 ```text
 PAPERLESS_TOKEN=your_paperless_api_token
 OPENAI_API_KEY=your_openai_api_key
+OPENAI_MODEL=gpt-5.4-mini
 ```
+
+`OPENAI_MODEL` is the model that will be sent to the OpenAI Responses API for every classification request. Change it here if you want to use another compatible model.
+
+The example configuration already contains `OPENAI_MODEL=gpt-5.4-mini`, but you should confirm that this is the model you want before the first start.
 
 Then protect the file:
 
@@ -167,13 +175,18 @@ Existing successfully classified documents are not automatically rewritten just 
 
 ## Configuration
 
-Most users only need to set the two credentials in `.classifier.env`.
+The three core values to set or confirm during installation are:
 
-Useful optional settings include:
+```text
+PAPERLESS_TOKEN=your_paperless_api_token
+OPENAI_API_KEY=your_openai_api_key
+OPENAI_MODEL=gpt-5.4-mini
+```
+
+Other settings are optional tuning:
 
 ```text
 PAPERLESS_URL=http://webserver:8000
-OPENAI_MODEL=gpt-5.4-mini
 MIN_CONFIDENCE=0.84
 BOOTSTRAP_EXISTING=true
 TITLE_LANGUAGE=fr
@@ -220,6 +233,8 @@ nano .classifier.env
 chmod 600 .classifier.env
 ./install-classifier.sh /path/to/paperless
 ```
+
+Before running the installer, set `PAPERLESS_TOKEN`, `OPENAI_API_KEY` and confirm `OPENAI_MODEL` in `.classifier.env`.
 
 With `BOOTSTRAP_EXISTING=true`, the classifier can classify the restored Paperless documents again.
 
